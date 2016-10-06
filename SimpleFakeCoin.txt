@@ -1,0 +1,99 @@
+package narkes;
+
+import java.util.Random;
+import java.util.Arrays;
+
+/**
+ *
+ * @author 
+ */
+public class SimpleFakeCoin {
+    
+    int zyg=0;
+    
+    public Coin[] initializeCoins(int numCoins)
+    {
+        Coin[] coins = new Coin[numCoins];
+        for(int j = 0; j < coins.length; j++) coins[j] = new Coin(0.02, j);
+        Random ran = new Random();
+        Float f = numCoins*ran.nextFloat();
+        int fakePosition = f.intValue();
+        coins[fakePosition].setWeight(0.01);  // this is the fake coin
+        System.out.println("The fake coin is a position "+fakePosition);
+        return coins;
+    }
+
+    /**********************************************************
+     *   -1 means the left pan is heavier
+     *    0 means the pans have equal weight
+     *    1 means the right pan is heavier
+     **********************************************************/
+    
+    private int compareCoins(Coin[] left, Coin[] mid, Coin[] right)
+    {
+        if(left.length != right.length||mid.length != right.length) System.out.println("unequal piles");
+        double leftWeight = 0.0;
+        for(int j = 0; j < left.length; j++) leftWeight += left[j].getWeight();
+        double rightWeight = 0.0;
+        for(int k = 0; k < right.length; k++) rightWeight += right[k].getWeight();
+        double midWeight = 0.0;
+        for(int q = 0; q < mid.length; q++) midWeight += mid[q].getWeight();
+        if(leftWeight < rightWeight) return 1;
+        else if (leftWeight > rightWeight) return -1;
+        else return 0;
+    }
+     
+    private void searchMessage(Coin[] coins)
+    {
+        if (coins.length >= 1)
+        {
+            System.out.println("searching from " + coins[0].getPosition()+ " to " + coins[coins.length - 1].getPosition());
+        } else System.out.println("searching empty array");
+    }
+ 
+    public int findFakeCoin(Coin[] coins)
+    {
+        if(coins.length == 0) return -1; // fake coin not found
+        else if(coins.length == 1) return coins[0].getPosition();
+        else 
+        {
+            boolean oddNumCoins = coins.length % 3 == 1;
+            int mid = coins.length/3;
+            int mid2 = coins.length*2/3;
+            Coin[] leftCoins = Arrays.copyOfRange(coins, 0, mid);
+            Coin[] midCoins = Arrays.copyOfRange(coins, mid, mid2);
+            Coin[] rightCoins = Arrays.copyOfRange(coins, mid2, coins.length);
+            int result = compareCoins(leftCoins, midCoins, rightCoins);
+            if(result == 1) {
+                searchMessage(leftCoins);
+                zyg++;
+                System.out.println("Zyg: "+zyg);
+                return findFakeCoin(leftCoins);
+            }
+            else if(result == -1){
+                searchMessage(rightCoins);
+                zyg++;
+                System.out.println("Zyg: "+zyg);
+                return findFakeCoin(rightCoins);
+            }
+            else if (result == 0){
+                searchMessage(midCoins);
+                zyg++;
+                System.out.println("Zyg: "+zyg);
+                return findFakeCoin(midCoins);
+            }
+            else if(oddNumCoins)
+            { 
+                zyg++;
+                System.out.println("Zyg: "+zyg);
+                return coins[coins.length-1].getPosition();
+            }
+            else return -1; // no fake coin found
+        }
+    }
+    
+    public int getZyg()
+    {
+        return zyg;
+    }
+}

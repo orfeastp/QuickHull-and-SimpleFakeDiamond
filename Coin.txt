@@ -1,0 +1,32 @@
+package narkes;
+
+/**
+ *
+ * @author ??f?a? ?sa?ts?a??d??
+ */
+public class Coin {
+    double weight;
+        int position;
+        
+        Coin(double weight, int position)
+        {
+            this.weight = weight;
+            this.position = position;
+        }
+
+        double getWeight() 
+        {
+            return weight;
+        }
+
+        void setWeight(double weight)
+        {
+            this.weight = weight;
+
+        }         
+        
+        int getPosition()
+        {
+            return position;
+        }
+}
